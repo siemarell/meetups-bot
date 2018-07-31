@@ -33,6 +33,11 @@ class Task(Base):  # , metaclass=ABCMeta):
     def __init__(self):
         self.status = TaskStatus.CREATED
 
+    @property
+    @abstractmethod
+    def description(self):
+        """Should contain task description"""
+
     @abstractmethod
     def verify(self, data) -> bool:
         """Should verify the data and mark task completed if it passes"""
@@ -47,6 +52,10 @@ class GetUserAddressTask(Task):
     __mapper_args__ = {
         'polymorphic_identity': 'task_get_user_address',
     }
+
+    @property
+    def description(self):
+        return f'Download Waves app and tell me your address'
 
     def verify(self, address):
         if pw.validateAddress(address):
