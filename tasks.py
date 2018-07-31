@@ -49,7 +49,7 @@ class GetUserAddressTask(Task):
     def verify(self, address):
         if pw.validateAddress(address):
             self.address = address
-            self.status = TaskStatus.DONE
+            self.status = TaskStatus.COMPLETED
             return True
         else:
             return False
