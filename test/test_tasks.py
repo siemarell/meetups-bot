@@ -1,14 +1,16 @@
 import unittest
-import db
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from tasks import Base, GetUserAddressTask, Task, TaskStatus
+from models import GetUserAddressTask, Task, TaskStatus, Base
+
+MEMORY = 'sqlite:///:memory:'
+DISK = 'sqlite:///storage.db'
 
 
 class TestTasks(unittest.TestCase):
 
     def setUp(self):
-        self.engine = create_engine('sqlite:///:memory:')
+        self.engine = create_engine(MEMORY)
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         Base.metadata.create_all(self.engine)
@@ -32,7 +34,7 @@ class TestTasks(unittest.TestCase):
         task.verify('3N3Cn2pYtqzj7N9pviSesNe8KG9Cmb718Y1')
         self.session.add(task)
         self.session.commit()
-        recovered = [task for task in self.session.query(Task)][0]
+        recovered = [task for task in self.session.query(Task)][-1]
         self.assertEqual(recovered.address, '3N3Cn2pYtqzj7N9pviSesNe8KG9Cmb718Y1')
         self.assertEqual(recovered.status, TaskStatus.COMPLETED)
 

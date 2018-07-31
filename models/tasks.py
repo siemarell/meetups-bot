@@ -1,18 +1,18 @@
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy import Enum as AEnum
 from enum import Enum, auto
 from abc import abstractmethod, ABCMeta
 import pywaves as pw
+from .base import Base
 
-Base = declarative_base()
 
 pw.setChain('testnet')
 
 
 class TaskStatus(Enum):
+    CREATED = auto()
     ADDED = auto()
-    SENT = auto(),
+    SENT = auto()
     COMPLETED = auto()
     REWARDED = auto()
 
@@ -23,6 +23,7 @@ class Task(Base):  # , metaclass=ABCMeta):
     id = Column(Integer, primary_key=True, nullable=False)
     status = Column(AEnum(TaskStatus))
     type = Column(String(20))
+    user_id = Column(String, ForeignKey('user.chat_id'))
 
     __mapper_args__ = {
         'polymorphic_identity': 'task',
@@ -30,7 +31,7 @@ class Task(Base):  # , metaclass=ABCMeta):
     }
 
     def __init__(self):
-        self.status = TaskStatus.ADDED
+        self.status = TaskStatus.CREATED
 
     @abstractmethod
     def verify(self, data) -> bool:
