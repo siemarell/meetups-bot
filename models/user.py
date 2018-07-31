@@ -16,4 +16,3 @@ class User(Base):
     def add_task(self, task: Task):
         task.status = TaskStatus.ADDED
         self.tasks.append(task)
-

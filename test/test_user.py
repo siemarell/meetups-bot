@@ -10,7 +10,7 @@ DISK = 'sqlite:///storage.db'
 class TestUser(unittest.TestCase):
 
     def setUp(self):
-        self.engine = create_engine(DISK)
+        self.engine = create_engine(MEMORY)
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         Base.metadata.create_all(self.engine)
