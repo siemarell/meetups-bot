@@ -4,7 +4,7 @@ Base = declarative_base()
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
     chat_id = Column(String, primary_key=True)
     address = Column(String)

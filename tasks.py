@@ -39,6 +39,7 @@ class Task(Base):  # , metaclass=ABCMeta):
 
 class GetUserAddressTask(Task):
     __tablename__ = 'task_get_address'
+
     id = Column(Integer, ForeignKey('task.id'), primary_key=True)
     address = Column(String, nullable=True)
 
