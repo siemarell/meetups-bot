@@ -1,8 +1,6 @@
 import logging
-import telegram
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from handlers import startHandler, helpHandler, menuHandler, menuCallbackHandler, unknownCommandHandler, messageHandler
-
+from telegram.ext import Updater
+from handlers import handlers
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
@@ -14,12 +12,8 @@ def main():
     dp = updater.dispatcher
 
     # Register handlers
-    dp.add_handler(startHandler)
-    dp.add_handler(helpHandler)
-    dp.add_handler(menuHandler)
-    dp.add_handler(menuCallbackHandler)
-    dp.add_handler(unknownCommandHandler)
-    dp.add_handler(messageHandler)
+    for handler in handlers:
+        dp.add_handler(handler)
 
     # Start bot
     updater.start_polling()

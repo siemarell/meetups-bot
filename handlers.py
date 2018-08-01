@@ -2,6 +2,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from models import User, GetUserAddressTask, TaskStatus, Task
 from db import Session
+from filters import menu_command_filter
 
 HELP_MSG = """Placeholder help message"""
 START_MSG = """Placeholder start message"""
@@ -21,7 +22,7 @@ def start(bot, update):
         session.commit()
     session.close()
     # Send start message
-    custom_keyboard = [['/tasks', 'ask us']]
+    custom_keyboard = [['Tasks\u00A0', 'Ask us\u00A0']]
     reply_markup = ReplyKeyboardMarkup(custom_keyboard)
     update.message.reply_text(START_MSG, reply_markup=reply_markup)
 
@@ -38,6 +39,10 @@ def menu(bot, update):
     pass
 
 
+def menu_cmd(bot, update):
+    print(update)
+
+
 def message(bot, update):
     chat_id = update.message.chat_id
     session = Session()
@@ -47,24 +52,15 @@ def message(bot, update):
     session.close()
 
 
-startHandler = CommandHandler('start', start)
-helpHandler = CommandHandler(['help', 'info'], helper)
-menuHandler = CommandHandler('menu', menu)
-menuCallbackHandler = CallbackQueryHandler(print)
-unknownCommandHandler = MessageHandler(Filters.command, unknown)
-messageHandler = MessageHandler(Filters.text, message)
-
-
-def build_menu(buttons,
-               n_cols,
-               header_buttons=None,
-               footer_buttons=None):
-    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
-    if header_buttons:
-        menu.insert(0, header_buttons)
-    if footer_buttons:
-        menu.append(footer_buttons)
-    return menu
+handlers = [
+    CommandHandler('start', start),                                       # Start command
+    CommandHandler(['help', 'info'], helper),                             # Help/info command
+    # CommandHandler('menu', menu),                                         # Menu command
+    # CallbackQueryHandler(print),                                          # Menu callback
+    MessageHandler(Filters.command, unknown),                             # Unknown command
+    MessageHandler(menu_command_filter, menu_cmd),                        # Messages from keyboard
+    MessageHandler(Filters.text, message)                                 # Text messages
+]
 
 
 def forward(update):
