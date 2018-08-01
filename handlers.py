@@ -2,7 +2,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from models import User, GetUserAddressTask, TaskStatus, Task
 from db import Session
-from menus import keyboard_menu_markup, tasks_menu, MenuCommands
+from menus import keyboard_menu_markup, create_tasks_menu, MenuCommands
 
 HELP_MSG = """Placeholder help message"""
 START_MSG = """Placeholder start message"""
@@ -45,7 +45,9 @@ def tasks(bot, update):
     if user.active_task:
         update.message.reply_text(user.active_task.description)
     else:
+        tasks_menu = create_tasks_menu(user.available_tasks)
         update.message.reply_text("Select task:", reply_markup=tasks_menu)
+    session.close()
 
 
 def ask_us(bot, update):

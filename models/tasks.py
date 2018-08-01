@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy import Enum as AEnum
 from enum import Enum, auto
-from abc import abstractmethod, ABCMeta
+from abc import abstractmethod
 import pywaves as pw
 from .base import Base
 

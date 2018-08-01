@@ -1,4 +1,4 @@
-from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton
 from enum import Enum, auto
 
 
@@ -19,12 +19,11 @@ class MenuCommands(Enum):
     ASK_US = 'Ask us\u00A0'
 
 
-button_list = [
-    InlineKeyboardButton("col1", callback_data="asd"),
-    InlineKeyboardButton("col2", callback_data="bcd"),
-    InlineKeyboardButton("row 2", callback_data='cde')
-]
+def create_tasks_menu(task_types):
+    button_list = [InlineKeyboardButton(s, callback_data=s) for s in task_types]
+    tasks_menu = InlineKeyboardMarkup(build_menu(button_list, n_cols=1))
+    return tasks_menu
 
-tasks_menu = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
+
 keyboard_menu_markup = ReplyKeyboardMarkup([[MenuCommands.TASKS.value, MenuCommands.ASK_US.value]])
 
