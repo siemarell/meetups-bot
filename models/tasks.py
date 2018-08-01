@@ -35,8 +35,18 @@ class Task(Base):  # , metaclass=ABCMeta):
 
     @property
     @abstractmethod
+    def result(self):
+        """What should be an answer: message, image, background"""
+
+    @property
+    @abstractmethod
     def description(self):
         """Should contain task description"""
+
+    @property
+    @abstractmethod
+    def on_complete_msg(self):
+        """Should contain message, witch we send to user after he completes the task"""
 
     @abstractmethod
     def verify(self, data) -> bool:
@@ -54,8 +64,16 @@ class GetUserAddressTask(Task):
     }
 
     @property
+    def result(self):
+        return 'message'
+
+    @property
     def description(self):
         return f'Download Waves app and tell me your address'
+
+    @property
+    def on_complete_msg(self):
+        return 'Congratulations! Now I have your address and you can choose next task'
 
     def verify(self, address):
         validated = False
@@ -67,3 +85,45 @@ class GetUserAddressTask(Task):
             self.address = address
             self.status = TaskStatus.COMPLETED
         return validated
+
+
+class DexExchangeTask(Task):
+    __tablename__ = 'task_dex_exchange'
+
+    id = Column(Integer, ForeignKey('task.id'), primary_key=True)
+
+    @property
+    def result(self):
+        return 'message'
+
+    @property
+    def description(self):
+        return "Exchange WAVES to BTC using DEX"
+
+    @property
+    def on_complete_msg(self):
+        return 'Congratulations! DEX task completed'
+
+    def verify(self, data) -> bool:
+        return data == 'Hello!'
+
+
+class SendWavesTask(Task):
+    __tablename__ = 'dummy_task2'
+
+    id = Column(Integer, ForeignKey('task.id'), primary_key=True)
+
+    @property
+    def result(self):
+        return 'message'
+
+    @property
+    def description(self):
+        return "Send x waves to y address!"
+
+    @property
+    def on_complete_msg(self):
+        return "Completed send task"
+
+    def verify(self, data) -> bool:
+        return data == 'Bye!'

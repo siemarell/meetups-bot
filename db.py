@@ -10,5 +10,6 @@ STORAGE = DISK
 engine = create_engine(STORAGE)
 if STORAGE == DISK:
     from models import Base
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 Session = sessionmaker(engine)

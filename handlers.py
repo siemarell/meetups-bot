@@ -2,11 +2,12 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from models import User, GetUserAddressTask, TaskStatus, Task
 from db import Session
-from filters import menu_command_filter
+from menus import keyboard_menu_markup, tasks_menu, MenuCommands
 
 HELP_MSG = """Placeholder help message"""
 START_MSG = """Placeholder start message"""
 UNKNOWN_CMD_MSG = """Placeholder unknown command message"""
+ASK_US_MESSAGE = """Placeholder ask us message"""
 
 
 def start(bot, update):
@@ -22,9 +23,7 @@ def start(bot, update):
         session.commit()
     session.close()
     # Send start message
-    custom_keyboard = [['Tasks\u00A0', 'Ask us\u00A0']]
-    reply_markup = ReplyKeyboardMarkup(custom_keyboard)
-    update.message.reply_text(START_MSG, reply_markup=reply_markup)
+    update.message.reply_text(START_MSG, reply_markup=keyboard_menu_markup)
 
 
 def helper(bot, update):
@@ -39,16 +38,33 @@ def menu(bot, update):
     pass
 
 
-def menu_cmd(bot, update):
-    print(update)
+def tasks(bot, update):
+    chat_id = update.message.chat_id
+    session = Session()
+    user: User = session.query(User).filter(User.chat_id == chat_id).one()
+    if user.active_task:
+        update.message.reply_text(user.active_task.description)
+    else:
+        update.message.reply_text("Select task:", reply_markup=tasks_menu)
+
+
+def ask_us(bot, update):
+    update.message.reply_text(ASK_US_MESSAGE)
 
 
 def message(bot, update):
     chat_id = update.message.chat_id
     session = Session()
     user: User = session.query(User).filter(User.chat_id == chat_id).one()
-    if not user.active_task or not user.active_task.verify(update.message.text):
+    active_task = user.active_task
+    if not active_task:
         forward(update)
+    else:
+        if active_task.result == 'message' and active_task.verify(update.message.text):
+            session.commit()
+            update.message.reply_text(active_task.on_complete_msg)
+        else:
+            forward(update)
     session.close()
 
 
@@ -56,9 +72,10 @@ handlers = [
     CommandHandler('start', start),                                       # Start command
     CommandHandler(['help', 'info'], helper),                             # Help/info command
     # CommandHandler('menu', menu),                                         # Menu command
-    # CallbackQueryHandler(print),                                          # Menu callback
+    CallbackQueryHandler(print),                                          # Menu callback
     MessageHandler(Filters.command, unknown),                             # Unknown command
-    MessageHandler(menu_command_filter, menu_cmd),                        # Messages from keyboard
+    MessageHandler(Filters.regex(MenuCommands.TASKS.value), tasks),       # Tasks command
+    MessageHandler(Filters.regex(MenuCommands.ASK_US.value), ask_us),     # Ask us command
     MessageHandler(Filters.text, message)                                 # Text messages
 ]
 

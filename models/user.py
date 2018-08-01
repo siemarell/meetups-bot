@@ -1,13 +1,12 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from . import Base, Task, TaskStatus
+from . import Base, Task, GetUserAddressTask, TaskStatus
 
 
 class User(Base):
     __tablename__ = 'user'
 
     chat_id = Column(String, primary_key=True)
-    address = Column(String)
     tasks = relationship("Task", backref='user', remote_side=[chat_id])
 
     def __init__(self, chat_id):
@@ -18,5 +17,16 @@ class User(Base):
         self.tasks.append(task)
 
     @property
-    def active_task(self):
-        return next(filter(lambda task: task.status == TaskStatus.SENT, self.tasks), None)
+    def active_task(self) -> Task:
+        return next(filter(lambda task: task.status == TaskStatus.ADDED, self.tasks), None)
+
+    @property
+    def completed_tasks(self):
+        return list(filter(lambda task: task.status == TaskStatus.COMPLETED, self.tasks), None)
+
+    @property
+    def address(self):
+        address_task: GetUserAddressTask = next(filter(lambda task: type(task) == GetUserAddressTask,
+                                                       self.completed_tasks), None)
+        if address_task:
+            return address_task.address
