@@ -8,7 +8,7 @@ class User(Base):
 
     chat_id = Column(String, primary_key=True)
     address = Column(String)
-    tasks = relationship("Task", backref='user')
+    tasks = relationship("Task", backref='user', remote_side=[chat_id])
 
     def __init__(self, chat_id):
         self.chat_id = chat_id
@@ -16,3 +16,7 @@ class User(Base):
     def add_task(self, task: Task):
         task.status = TaskStatus.ADDED
         self.tasks.append(task)
+
+    @property
+    def active_task(self):
+        return next(filter(lambda task: task.status == TaskStatus.SENT, self.tasks), None)

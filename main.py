@@ -1,7 +1,7 @@
 import logging
 import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from handlers import startHandler, helpHandler, menuHandler, unknownCommandHandler, messageHandler
+from handlers import startHandler, helpHandler, menuHandler, menuCallbackHandler, unknownCommandHandler, messageHandler
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -17,6 +17,7 @@ def main():
     dp.add_handler(startHandler)
     dp.add_handler(helpHandler)
     dp.add_handler(menuHandler)
+    dp.add_handler(menuCallbackHandler)
     dp.add_handler(unknownCommandHandler)
     dp.add_handler(messageHandler)
 

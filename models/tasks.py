@@ -58,9 +58,12 @@ class GetUserAddressTask(Task):
         return f'Download Waves app and tell me your address'
 
     def verify(self, address):
-        if pw.validateAddress(address):
+        validated = False
+        try:
+            validated = pw.validateAddress(address)
+        except:
+            pass
+        if validated:
             self.address = address
             self.status = TaskStatus.COMPLETED
-            return True
-        else:
-            return False
+        return validated
