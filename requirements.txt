@@ -1,0 +1,12 @@
+base58==0.2.5
+certifi==2018.4.16
+chardet==3.0.4
+future==0.16.0
+idna==2.7
+pyblake2==1.1.2
+python-axolotl-curve25519==0.4.1.post2
+python-telegram-bot==10.1.0
+PyWaves==0.8.14.post2
+requests==2.19.1
+SQLAlchemy==1.2.10
+urllib3==1.23
