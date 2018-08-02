@@ -3,6 +3,8 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 from models import User, GetUserAddressTask, TaskStatus, Task, TASK_TYPES
 from db import Session
 from menus import keyboard_menu_markup, create_tasks_menu, MenuCommands
+from custom_filters import reply_to_forward
+from config import ADMIN_CHAT_ID
 
 HELP_MSG = """Placeholder help message"""
 START_MSG = """Placeholder start message"""
@@ -72,18 +74,22 @@ def message(bot, update):
     user: User = session.query(User).filter(User.chat_id == chat_id).one()
     active_task = user.active_task
     if not active_task:
-        forward(update)
+        forward_to_admin(bot, update)
     else:
         if active_task.result == 'message' and active_task.verify(update.message.text):
             session.commit()
             update.message.reply_text(active_task.on_complete_msg)
         else:
-            forward(update)
+            forward_to_admin(bot, update)
     session.close()
 
 
-def group(bot, update):
-    print(update)
+def forward_to_admin(bot, update):
+    bot.forwardMessage(ADMIN_CHAT_ID, update.message.chat_id, update.message.message_id)
+
+
+def admin_reply(bot, update):
+    bot.sendMessage(update.message.reply_to_message.forward_from.id, update.message.text)
 
 
 handlers = [
@@ -94,11 +100,6 @@ handlers = [
     MessageHandler(Filters.private & Filters.command, unknown),                             # Unknown command
     MessageHandler(Filters.private & Filters.regex(MenuCommands.TASKS.value), tasks),       # Tasks command
     MessageHandler(Filters.private & Filters.regex(MenuCommands.ASK_US.value), ask_us),     # Ask us command
-    MessageHandler(Filters.private & Filters.text, message),                                # Text messages
-    MessageHandler(Filters.group & Filters.text, group),
-    CommandHandler('start', print, filters=Filters.group),
+    MessageHandler(Filters.private & Filters.text, message),                                # User text messages
+    MessageHandler(Filters.chat(ADMIN_CHAT_ID) & reply_to_forward, admin_reply),            # Admin reply to forwarded
 ]
-
-
-def forward(update):
-    pass
