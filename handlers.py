@@ -82,15 +82,21 @@ def message(bot, update):
     session.close()
 
 
+def group(bot, update):
+    print(update)
+
+
 handlers = [
-    CommandHandler('start', start),                                       # Start command
-    CommandHandler(['help', 'info'], helper),                             # Help/info command
-    # CommandHandler('menu', menu),                                         # Menu command
-    CallbackQueryHandler(task_menu_callback),                             # Task menu callback
-    MessageHandler(Filters.command, unknown),                             # Unknown command
-    MessageHandler(Filters.regex(MenuCommands.TASKS.value), tasks),       # Tasks command
-    MessageHandler(Filters.regex(MenuCommands.ASK_US.value), ask_us),     # Ask us command
-    MessageHandler(Filters.text, message)                                 # Text messages
+    CommandHandler('start', start, filters=Filters.private),                                # Start command
+    CommandHandler(['help', 'info'], helper, filters=Filters.private),                      # Help/info command
+    # CommandHandler('menu', menu),                                                           # Menu command
+    CallbackQueryHandler(task_menu_callback),                                               # Task menu callback
+    MessageHandler(Filters.private & Filters.command, unknown),                             # Unknown command
+    MessageHandler(Filters.private & Filters.regex(MenuCommands.TASKS.value), tasks),       # Tasks command
+    MessageHandler(Filters.private & Filters.regex(MenuCommands.ASK_US.value), ask_us),     # Ask us command
+    MessageHandler(Filters.private & Filters.text, message),                                # Text messages
+    MessageHandler(Filters.group & Filters.text, group),
+    CommandHandler('start', print, filters=Filters.group),
 ]
 
 

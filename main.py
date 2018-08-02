@@ -1,13 +1,14 @@
 import logging
 from telegram.ext import Updater
 from handlers import handlers
+from config import BOT_TOKEN
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
 
 def main():
-    updater = Updater('558192444:AAHXehbN2ItrZahpH_mDqig76cvcLspFtVg')
+    updater = Updater(BOT_TOKEN)
 
     dp = updater.dispatcher
 
