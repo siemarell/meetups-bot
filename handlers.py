@@ -1,6 +1,6 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
-from models import User, GetUserAddressTask, TaskStatus, Task
+from models import User, GetUserAddressTask, TaskStatus, Task, TASK_TYPES
 from db import Session
 from menus import keyboard_menu_markup, create_tasks_menu, MenuCommands
 
@@ -34,8 +34,20 @@ def unknown(bot, update):
     update.message.reply_text(UNKNOWN_CMD_MSG)
 
 
-def menu(bot, update):
-    pass
+def task_menu_callback(bot, update):
+    chat_id = update.effective_user.id
+    session = Session()
+    user: User = session.query(User).filter(User.chat_id == chat_id).one()
+    if user.active_task:
+        msg = f"""You have an active task:\n{user.active_task.description}"""
+        update.effective_message.reply_text(msg)
+    else:
+        task_name = update.callback_query.data
+        task = next(filter(lambda x: x.name() == task_name, TASK_TYPES))()
+        user.add_task(task)
+        update.effective_message.reply_text(task.description)
+        session.commit()
+    session.close()
 
 
 def tasks(bot, update):
@@ -74,7 +86,7 @@ handlers = [
     CommandHandler('start', start),                                       # Start command
     CommandHandler(['help', 'info'], helper),                             # Help/info command
     # CommandHandler('menu', menu),                                         # Menu command
-    CallbackQueryHandler(print),                                          # Menu callback
+    CallbackQueryHandler(task_menu_callback),                             # Task menu callback
     MessageHandler(Filters.command, unknown),                             # Unknown command
     MessageHandler(Filters.regex(MenuCommands.TASKS.value), tasks),       # Tasks command
     MessageHandler(Filters.regex(MenuCommands.ASK_US.value), ask_us),     # Ask us command

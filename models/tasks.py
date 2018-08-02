@@ -26,12 +26,17 @@ class Task(Base):  # , metaclass=ABCMeta):
     user_id = Column(String, ForeignKey('user.chat_id'))
 
     __mapper_args__ = {
-        'polymorphic_identity': 'task',
+        'polymorphic_identity': __tablename__,
         'polymorphic_on': type
     }
 
     def __init__(self):
         self.status = TaskStatus.CREATED
+
+    @staticmethod
+    @abstractmethod
+    def name():
+        return 'Basic task'
 
     @property
     @abstractmethod
@@ -60,8 +65,12 @@ class GetUserAddressTask(Task):
     address = Column(String, nullable=True)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'task_get_user_address',
+        'polymorphic_identity': 'task_get_address',
     }
+
+    @staticmethod
+    def name():
+        return 'Give address'
 
     @property
     def result(self):
@@ -92,6 +101,14 @@ class DexExchangeTask(Task):
 
     id = Column(Integer, ForeignKey('task.id'), primary_key=True)
 
+    __mapper_args__ = {
+        'polymorphic_identity': __tablename__,
+    }
+
+    @staticmethod
+    def name():
+        return 'Make DEX transaction'
+
     @property
     def result(self):
         return 'message'
@@ -109,9 +126,17 @@ class DexExchangeTask(Task):
 
 
 class SendWavesTask(Task):
-    __tablename__ = 'dummy_task2'
+    __tablename__ = 'task_send_waves'
 
     id = Column(Integer, ForeignKey('task.id'), primary_key=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': __tablename__,
+    }
+
+    @staticmethod
+    def name():
+        return 'Make WAVES transaction'
 
     @property
     def result(self):
@@ -127,3 +152,6 @@ class SendWavesTask(Task):
 
     def verify(self, data) -> bool:
         return data == 'Bye!'
+
+
+TASK_TYPES = [GetUserAddressTask, DexExchangeTask, SendWavesTask]
