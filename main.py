@@ -2,7 +2,7 @@ import logging
 from telegram.ext import Updater
 from handlers import handlers
 from bot import bot
-from transactionschecker import TransactionsChecker
+from checker import Checker
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -19,7 +19,7 @@ def main():
         dp.add_handler(handler)
 
     # Tasks checker
-    checker = TransactionsChecker()
+    checker = Checker(bot)
     checker.daemon = True
     checker.start()
     # Start bot

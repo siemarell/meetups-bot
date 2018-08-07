@@ -2,11 +2,11 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy import Enum as AEnum
 from enum import Enum, auto
 from abc import abstractmethod
-import pywaves as pw
+from config import CHAIN
 from .base import Base
+import pywaves as pw
 
-
-pw.setChain('testnet')
+pw.setChain(CHAIN)
 
 
 class TaskStatus(Enum):
@@ -30,10 +30,17 @@ class Task(Base):  # , metaclass=ABCMeta):
         'polymorphic_on': type
     }
 
+    """Reward for task completion in WAVES"""
     reward = 0
 
     def __init__(self):
         self.status = TaskStatus.CREATED
+
+    def verify(self, *args) -> bool:
+        condition = self._verify(*args)
+        if condition:
+            self.status = TaskStatus.COMPLETED
+        return condition
 
     @staticmethod
     @abstractmethod
@@ -42,21 +49,21 @@ class Task(Base):  # , metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def result(self):
+    def result(self) -> str:
         """What should be an answer: message, image, background"""
 
     @property
     @abstractmethod
-    def description(self):
+    def description(self) -> str:
         """Should contain task description"""
 
     @property
     @abstractmethod
-    def on_complete_msg(self):
+    def on_complete_msg(self) -> str:
         """Should contain message, witch we send to user after he completes the task"""
 
     @abstractmethod
-    def verify(self, data) -> bool:
+    def _verify(self, *args) -> bool:
         """Should verify the data and mark task completed if it passes"""
 
 
@@ -86,7 +93,7 @@ class GetUserAddressTask(Task):
     def on_complete_msg(self):
         return 'Congratulations! Now I have your address and you can choose next task'
 
-    def verify(self, address):
+    def _verify(self, address):
         validated = False
         try:
             validated = pw.validateAddress(address)
@@ -94,7 +101,6 @@ class GetUserAddressTask(Task):
             pass
         if validated:
             self.address = address
-            self.status = TaskStatus.COMPLETED
         return validated
 
 
@@ -125,8 +131,8 @@ class DexExchangeTask(Task):
     def on_complete_msg(self):
         return 'Congratulations! DEX task completed'
 
-    def verify(self, data) -> bool:
-        return data == 'Hello!'
+    def _verify(self) -> bool:
+        return False
 
 
 class SendWavesTask(Task):
@@ -156,8 +162,8 @@ class SendWavesTask(Task):
     def on_complete_msg(self):
         return "Completed send task"
 
-    def verify(self, data) -> bool:
-        return data == 'Bye!'
+    def _verify(self) -> bool:
+        return False
 
 
 TASK_TYPES = [GetUserAddressTask, DexExchangeTask, SendWavesTask]
