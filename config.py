@@ -7,7 +7,8 @@ APP_SECRET_KEY = os.environ.get('APP_SECRET_KEY')
 
 # BOT SETTINGS
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
-ADMIN_CHAT_ID = int(os.environ.get('ADMIN_CHAT_ID'))
+ADMIN_CHAT_ID = int(os.environ.get('ADMIN_CHAT_ID')) if os.environ.get('ADMIN_CHAT_ID') else None
 
 # APP SETTINGS
-CHECK_INTERVAL = os.environ.get('CHECK_INTERVAL') or 5  # Background task check interval in seconds
+# Background task check interval in seconds
+CHECK_INTERVAL = int(os.environ.get('CHECK_INTERVAL')) if os.environ.get('CHECK_INTERVAL') else 5
