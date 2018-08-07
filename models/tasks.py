@@ -30,6 +30,8 @@ class Task(Base):  # , metaclass=ABCMeta):
         'polymorphic_on': type
     }
 
+    reward = 0
+
     def __init__(self):
         self.status = TaskStatus.CREATED
 
@@ -105,13 +107,15 @@ class DexExchangeTask(Task):
         'polymorphic_identity': __tablename__,
     }
 
+    reward = 0.01
+
     @staticmethod
     def name():
         return 'Make DEX transaction'
 
     @property
     def result(self):
-        return 'message'
+        return 'background'
 
     @property
     def description(self):
@@ -134,13 +138,15 @@ class SendWavesTask(Task):
         'polymorphic_identity': __tablename__,
     }
 
+    reward = 0.01
+
     @staticmethod
     def name():
         return 'Make WAVES transaction'
 
     @property
     def result(self):
-        return 'message'
+        return 'background'
 
     @property
     def description(self):
