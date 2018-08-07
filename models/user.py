@@ -7,7 +7,7 @@ class User(Base):
     __tablename__ = 'user'
 
     chat_id = Column(String, primary_key=True)
-    tasks = relationship("Task", backref='user', remote_side=[chat_id])
+    tasks = relationship("Task", back_populates='user', remote_side=[chat_id])
 
     def __init__(self, chat_id):
         self.chat_id = chat_id

@@ -4,6 +4,10 @@ import os
 CHAIN = os.environ.get('CHAIN') or 'testnet'
 APP_ADDRESS = os.environ.get('REWARD_ADDRESS')
 APP_SECRET_KEY = os.environ.get('APP_SECRET_KEY')
+NODES = {
+    'testnet': 'https://testnodes.wavesnodes.com',
+    'mainnet': 'https://nodes.wavesnodes.com'
+}
 
 # BOT SETTINGS
 BOT_TOKEN = os.environ.get('BOT_TOKEN')

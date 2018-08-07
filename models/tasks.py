@@ -1,10 +1,13 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy import Enum as AEnum
 from enum import Enum, auto
 from abc import abstractmethod
-from config import CHAIN
-from .base import Base
 import pywaves as pw
+import requests
+from config import CHAIN, NODES
+from .base import Base
+
 
 pw.setChain(CHAIN)
 
@@ -25,6 +28,8 @@ class Task(Base):  # , metaclass=ABCMeta):
     type = Column(String(20))
     user_id = Column(String, ForeignKey('user.chat_id'))
 
+    user = relationship("User", back_populates='tasks')
+
     __mapper_args__ = {
         'polymorphic_identity': __tablename__,
         'polymorphic_on': type
@@ -44,7 +49,7 @@ class Task(Base):  # , metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
-    def name():
+    def name() -> str:
         return 'Basic task'
 
     @property
@@ -78,19 +83,19 @@ class GetUserAddressTask(Task):
     }
 
     @staticmethod
-    def name():
+    def name() -> str:
         return 'Give address'
 
     @property
-    def result(self):
+    def result(self) -> str:
         return 'message'
 
     @property
-    def description(self):
+    def description(self) -> str:
         return f'Download Waves app and tell me your address'
 
     @property
-    def on_complete_msg(self):
+    def on_complete_msg(self) -> str:
         return 'Congratulations! Now I have your address and you can choose next task'
 
     def _verify(self, address):
@@ -116,22 +121,24 @@ class DexExchangeTask(Task):
     reward = 0.01
 
     @staticmethod
-    def name():
+    def name() -> str:
         return 'Make DEX transaction'
 
     @property
-    def result(self):
+    def result(self) -> str:
         return 'background'
 
     @property
-    def description(self):
+    def description(self) -> str:
         return "Exchange WAVES to BTC using DEX"
 
     @property
-    def on_complete_msg(self):
+    def on_complete_msg(self) -> str:
         return 'Congratulations! DEX task completed'
 
     def _verify(self) -> bool:
+        node_url = NODES.get(CHAIN)
+        transactions = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()
         return False
 
 
@@ -147,19 +154,19 @@ class SendWavesTask(Task):
     reward = 0.01
 
     @staticmethod
-    def name():
+    def name() -> str:
         return 'Make WAVES transaction'
 
     @property
-    def result(self):
+    def result(self) -> str:
         return 'background'
 
     @property
-    def description(self):
+    def description(self) -> str:
         return "Send x waves to y address!"
 
     @property
-    def on_complete_msg(self):
+    def on_complete_msg(self) -> str:
         return "Completed send task"
 
     def _verify(self) -> bool:
