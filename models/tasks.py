@@ -1,13 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import Enum as AEnum
+import datetime
 from enum import Enum, auto
 from abc import abstractmethod
 import pywaves as pw
 import requests
-from config import CHAIN, NODES
+from config import CHAIN, NODES, APP_WAVES_ADDRESS
 from .base import Base
-
 
 pw.setChain(CHAIN)
 
@@ -25,6 +25,7 @@ class Task(Base):  # , metaclass=ABCMeta):
 
     id = Column(Integer, primary_key=True, nullable=False)
     status = Column(AEnum(TaskStatus))
+    created = Column(TIMESTAMP)
     type = Column(String(20))
     user_id = Column(String, ForeignKey('user.chat_id'))
 
@@ -40,6 +41,7 @@ class Task(Base):  # , metaclass=ABCMeta):
 
     def __init__(self):
         self.status = TaskStatus.CREATED
+        self.created = datetime.datetime.now()
 
     def verify(self, *args) -> bool:
         condition = self._verify(*args)
@@ -163,13 +165,24 @@ class SendWavesTask(Task):
 
     @property
     def description(self) -> str:
-        return "Send x waves to y address!"
+        return f"Send 1 waves to {APP_WAVES_ADDRESS}"
 
     @property
     def on_complete_msg(self) -> str:
         return "Completed send task"
 
     def _verify(self) -> bool:
+        node_url = NODES.get(CHAIN)
+        try:
+            all_txs = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()[0]
+            txs_to_app = [tx for tx in all_txs if
+                          tx['type'] == 4 and
+                          tx['recipient'] == APP_WAVES_ADDRESS and
+                          tx['timestamp']/1000 > self.created.timestamp()]
+            if txs_to_app:
+                return True
+        except Exception as e:
+            pass
         return False
 
 

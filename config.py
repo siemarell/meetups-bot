@@ -2,7 +2,7 @@ import os
 
 # BLOCKCHAIN SETTINGS
 CHAIN = os.environ.get('CHAIN') or 'testnet'
-APP_ADDRESS = os.environ.get('REWARD_ADDRESS')
+APP_WAVES_ADDRESS = os.environ.get('APP_WAVES_ADDRESS')
 APP_SECRET_KEY = os.environ.get('APP_SECRET_KEY')
 NODES = {
     'testnet': 'https://testnodes.wavesnodes.com',

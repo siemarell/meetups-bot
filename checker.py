@@ -3,7 +3,7 @@ from threading import Thread
 from time import sleep
 from models import Task, TaskStatus, DexExchangeTask, SendWavesTask, User
 from db import Session
-from config import APP_ADDRESS, CHAIN, CHECK_INTERVAL
+from config import CHAIN, CHECK_INTERVAL
 import pywaves as pw
 
 pw.setChain(CHAIN)
