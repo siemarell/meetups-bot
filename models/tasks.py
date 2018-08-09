@@ -4,11 +4,12 @@ from sqlalchemy import Enum as AEnum
 import datetime
 from enum import Enum, auto
 from abc import abstractmethod
-import pywaves as pw
 import requests
 from config import CHAIN, NODES, APP_WAVES_ADDRESS
 from .base import Base
+from rewarder import rewarder
 
+import pywaves as pw
 pw.setChain(CHAIN)
 
 
@@ -47,6 +48,12 @@ class Task(Base):  # , metaclass=ABCMeta):
         condition = self._verify(*args)
         if condition:
             self.status = TaskStatus.COMPLETED
+            if self.reward > 0:
+                try:
+                    rewarder.send_reward(self.user.address, self.reward)
+                    self.status = TaskStatus.REWARDED
+                except Exception as e:
+                    print(e)
         return condition
 
     @staticmethod
@@ -120,7 +127,7 @@ class DexExchangeTask(Task):
         'polymorphic_identity': __tablename__,
     }
 
-    reward = 0.01
+    reward = 1
 
     @staticmethod
     def name() -> str:
@@ -153,7 +160,7 @@ class SendWavesTask(Task):
         'polymorphic_identity': __tablename__,
     }
 
-    reward = 0.01
+    reward = 1
 
     @staticmethod
     def name() -> str:

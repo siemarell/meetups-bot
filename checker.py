@@ -4,9 +4,6 @@ from time import sleep
 from models import Task, TaskStatus, DexExchangeTask, SendWavesTask, User
 from db import Session
 from config import CHAIN, CHECK_INTERVAL
-import pywaves as pw
-
-pw.setChain(CHAIN)
 
 
 class Checker(Thread):
@@ -21,9 +18,9 @@ class Checker(Thread):
                                       if user.active_task and user.active_task.result == 'background']
 
             for user in users_to_check:
-                active_task = user.active_task
-                if active_task.verify():
-                    self.bot.send_message(user.chat_id, active_task.on_complete_msg)
+                task = user.active_task
+                if task.verify():
+                    self.bot.send_message(user.chat_id, task.on_complete_msg)
                     session.commit()
             session.close()
             sleep(CHECK_INTERVAL)

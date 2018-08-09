@@ -22,7 +22,7 @@ class User(Base):
 
     @property
     def completed_tasks(self) -> [Task]:
-        return list(filter(lambda task: task.status == TaskStatus.COMPLETED, self.tasks))
+        return list(filter(lambda task: task.status in [TaskStatus.COMPLETED, TaskStatus.REWARDED], self.tasks))
 
     @property
     def address(self) -> str:
