@@ -9,7 +9,9 @@ from config import ADMIN_CHAT_ID
 HELP_MSG = """Placeholder help message"""
 START_MSG = """Placeholder start message"""
 UNKNOWN_CMD_MSG = """Placeholder unknown command message"""
-ASK_US_MESSAGE = """Placeholder ask us message"""
+ASK_US_MSG = """Placeholder ask us message"""
+ACTIVE_TASK_MSG = "You have an active task:\n%s"
+ALREADY_COMPLETED_MSG = "Task %s already completed"
 
 
 def start(bot, update):
@@ -40,12 +42,17 @@ def task_menu_callback(bot, update):
     chat_id = update.effective_user.id
     session = Session()
     user: User = session.query(User).filter(User.chat_id == chat_id).one()
+    task_name = update.callback_query.data
     if user.active_task:
-        msg = f"""You have an active task:\n{user.active_task.description}"""
+        msg = ACTIVE_TASK_MSG % user.active_task.description
+        update.effective_message.reply_text(msg)
+    elif task_name in (task.name() for task in user.completed_tasks):
+        msg = ALREADY_COMPLETED_MSG % task_name
         update.effective_message.reply_text(msg)
     else:
-        task_name = update.callback_query.data
+        # Get task class and create instance
         task = next(filter(lambda x: x.name() == task_name, TASK_TYPES))()
+
         user.add_task(task)
         update.effective_message.reply_text(task.description)
         session.commit()
@@ -65,7 +72,7 @@ def tasks(bot, update):
 
 
 def ask_us(bot, update):
-    update.message.reply_text(ASK_US_MESSAGE)
+    update.message.reply_text(ASK_US_MSG)
 
 
 def message(bot, update):
