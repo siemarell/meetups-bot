@@ -15,4 +15,5 @@ ADMIN_CHAT_ID = int(os.environ.get('ADMIN_CHAT_ID')) if os.environ.get('ADMIN_CH
 
 # APP SETTINGS
 # Background task check interval in seconds
+ENV = os.environ.get('ENV', 'PROD')
 CHECK_INTERVAL = int(os.environ.get('CHECK_INTERVAL')) if os.environ.get('CHECK_INTERVAL') else 5

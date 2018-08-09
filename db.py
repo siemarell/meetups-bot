@@ -1,15 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from models import Base
+from config import ENV
 
 MEMORY = 'sqlite:///:memory:'
 DISK = 'sqlite:///storage.db'
 
-# Todo: use process.env == dev instead
-STORAGE = DISK
+engine = create_engine(DISK)
 
-engine = create_engine(STORAGE)
-if STORAGE == DISK:
-    from models import Base
+if ENV == 'DEV':
     Base.metadata.drop_all(engine)
-    Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 Session = sessionmaker(engine)
