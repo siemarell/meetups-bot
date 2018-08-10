@@ -10,6 +10,7 @@ from .base import Base
 from rewarder import rewarder
 
 import pywaves as pw
+
 pw.setChain(CHAIN)
 
 
@@ -146,8 +147,21 @@ class DexExchangeTask(Task):
         return 'Congratulations! DEX task completed'
 
     def _verify(self) -> bool:
+        # Todo: Test and verify amount
         node_url = NODES.get(CHAIN)
-        transactions = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()
+        try:
+            last_500_tx = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()
+            exchange = [tx for tx in last_500_tx if
+                        tx['type'] == 7 and
+                        tx['order1']['assetPair']['priceAsset'] == {
+                            'amountAsset': 'WAVES',
+                            'priceAsset': '8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS'
+                        } and
+                        tx['timestamp'] / 1000 > self.created.timestamp()]
+            if exchange:
+                return True
+        except:
+            pass
         return False
 
 
@@ -179,13 +193,14 @@ class SendWavesTask(Task):
         return "Completed send task"
 
     def _verify(self) -> bool:
+        # Todo: verify amount
         node_url = NODES.get(CHAIN)
         try:
-            all_txs = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()[0]
-            txs_to_app = [tx for tx in all_txs if
+            last_500_tx = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()[0]
+            txs_to_app = [tx for tx in last_500_tx if
                           tx['type'] == 4 and
                           tx['recipient'] == APP_WAVES_ADDRESS and
-                          tx['timestamp']/1000 > self.created.timestamp()]
+                          tx['timestamp'] / 1000 > self.created.timestamp()]
             if txs_to_app:
                 return True
         except Exception as e:
