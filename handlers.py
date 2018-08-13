@@ -1,3 +1,4 @@
+import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from models import User, GetUserAddressTask, TaskStatus, Task, TASK_TYPES
@@ -99,14 +100,27 @@ def admin_reply(bot, update):
     bot.sendMessage(update.message.reply_to_message.forward_from.id, update.message.text)
 
 
+def photo(bot, update):
+    chat_id = update.message.chat_id
+    session = Session()
+    user: User = session.query(User).filter(User.chat_id == chat_id).one()
+    active_task = user.active_task
+    if active_task and active_task.result == 'image':
+        _, full_image = update.message.photo
+        if active_task.verify(full_image):
+            session.commit()
+            update.message.reply_text(active_task.on_complete_msg)
+    session.close()
+
+
 handlers = [
     CommandHandler('start', start, filters=Filters.private),                                # Start command
     CommandHandler(['help', 'info'], helper, filters=Filters.private),                      # Help/info command
-    # CommandHandler('menu', menu),                                                           # Menu command
     CallbackQueryHandler(task_menu_callback),                                               # Task menu callback
     MessageHandler(Filters.private & Filters.command, unknown),                             # Unknown command
-    MessageHandler(Filters.private & Filters.regex(MenuCommands.TASKS.value), tasks),       # Tasks command
-    MessageHandler(Filters.private & Filters.regex(MenuCommands.ASK_US.value), ask_us),     # Ask us command
+    MessageHandler(Filters.private & Filters.text & Filters.regex(MenuCommands.TASKS.value), tasks),    # Tasks command
+    MessageHandler(Filters.private & Filters.text & Filters.regex(MenuCommands.ASK_US.value), ask_us),  # Ask us command
+    MessageHandler(Filters.private & Filters.photo, photo),                                 # User photos
     MessageHandler(Filters.private & Filters.text, message),                                # User text messages
     MessageHandler(Filters.chat(ADMIN_CHAT_ID) & reply_to_forward, admin_reply),            # Admin reply to forwarded
 ]

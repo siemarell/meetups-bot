@@ -8,6 +8,7 @@ import requests
 from config import CHAIN, NODES, APP_WAVES_ADDRESS
 from .base import Base
 from rewarder import rewarder
+from check_selfie import face_locations
 
 import pywaves as pw
 
@@ -208,4 +209,41 @@ class SendWavesTask(Task):
         return False
 
 
-TASK_TYPES = [GetUserAddressTask, DexExchangeTask, SendWavesTask]
+class SendSelfieTask(Task):
+    __tablename__ = 'task_send_selfie'
+
+    id = Column(Integer, ForeignKey('task.id'), primary_key=True)
+    image_path = Column(String)
+    __mapper_args__ = {
+        'polymorphic_identity': __tablename__,
+    }
+
+    reward = 1
+
+    @staticmethod
+    def name() -> str:
+        return 'Send selfie'
+
+    @property
+    def result(self) -> str:
+        return 'image'
+
+    @property
+    def description(self) -> str:
+        return 'Send me your selfie'
+
+    @property
+    def on_complete_msg(self) -> str:
+        return 'Congratulations! I got your picture.'
+
+    def _verify(self, full_image) -> bool:
+        # ToDo: Send message on false condition. User should know why image is bad
+        image_file = full_image.get_file()
+        image_bytes = image_file.download_as_bytearray()
+        condition = len(face_locations(image_bytes)) == 1
+        if condition:
+            self.image_path = image_file.file_path
+        return condition
+
+
+TASK_TYPES = [GetUserAddressTask, DexExchangeTask, SendWavesTask, SendSelfieTask]
