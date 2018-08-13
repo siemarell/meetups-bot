@@ -2,7 +2,12 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 from enum import Enum, auto
 
 
-def build_menu(buttons,
+class MenuCommands(Enum):
+    TASKS = 'Tasks\u00A0'
+    ASK_US = 'Ask us\u00A0'
+
+
+def _build_menu(buttons,
                n_cols,
                header_buttons=None,
                footer_buttons=None):
@@ -14,14 +19,9 @@ def build_menu(buttons,
     return menu
 
 
-class MenuCommands(Enum):
-    TASKS = 'Tasks\u00A0'
-    ASK_US = 'Ask us\u00A0'
-
-
 def create_tasks_menu(task_types):
     button_list = [InlineKeyboardButton(s, callback_data=s) for s in task_types]
-    tasks_menu = InlineKeyboardMarkup(build_menu(button_list, n_cols=1))
+    tasks_menu = InlineKeyboardMarkup(_build_menu(button_list, n_cols=1))
     return tasks_menu
 
 

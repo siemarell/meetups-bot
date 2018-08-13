@@ -148,18 +148,20 @@ class DexExchangeTask(Task):
         return 'Congratulations! DEX task completed'
 
     def _verify(self) -> bool:
-        # Todo: Test and verify amount
+        # Todo: verify amount
         node_url = NODES.get(CHAIN)
         try:
-            last_500_tx = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()
+            last_500_tx = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()[0]
             exchange = [tx for tx in last_500_tx if
-                        tx['type'] == 7 and
-                        tx['order1']['assetPair']['priceAsset'] == {
-                            'amountAsset': 'WAVES',
-                            'priceAsset': '8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS'
-                        } and
+                        tx['type'] == 7
+                        and
+                        (tx['order1']['assetPair'] == {'amountAsset': None,
+                                                       'priceAsset': '8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS'} or
+                         tx['order2']['assetPair'] == {'amountAsset': None,
+                                                       'priceAsset': '8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS'})
+                        and
                         tx['timestamp'] / 1000 > self.created.timestamp()]
-            if exchange:
+            if len(exchange) > 0:
                 return True
         except:
             pass

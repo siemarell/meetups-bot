@@ -6,13 +6,7 @@ from db import Session
 from menus import keyboard_menu_markup, create_tasks_menu, MenuCommands
 from custom_filters import reply_to_forward
 from config import ADMIN_CHAT_ID
-
-HELP_MSG = """Placeholder help message"""
-START_MSG = """Placeholder start message"""
-UNKNOWN_CMD_MSG = """Placeholder unknown command message"""
-ASK_US_MSG = """Placeholder ask us message"""
-ACTIVE_TASK_MSG = "You have an active task:\n%s"
-ALREADY_COMPLETED_MSG = "Task %s already completed"
+from bot_messages import *
 
 
 def start(bot, update):
@@ -110,6 +104,8 @@ def photo(bot, update):
         if active_task.verify(full_image):
             session.commit()
             update.message.reply_text(active_task.on_complete_msg)
+        else:
+            update.message.reply_text(BAD_IMAGE_MSG)
     session.close()
 
 
