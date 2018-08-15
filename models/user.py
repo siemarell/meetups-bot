@@ -39,14 +39,14 @@ class User(Base):
         if selfie_task:
             return selfie_task.image_path
 
-    @property
-    def available_tasks(self) -> [str]:
-        if not self.address:
-            return [GetUserAddressTask]
-
-        completed_types = [type(task) for task in self.completed_tasks]
-
-        available = [TaskType.name() for TaskType in TASK_TYPES if TaskType not in completed_types]
-        # Make find user task available only if user has completed send selfie task and there is another user
-        # that has completed it
-        return available
+    # @property
+    # def available_tasks(self) -> [str]:
+    #     if not self.address:
+    #         return [GetUserAddressTask]
+    #
+    #     completed_types = [type(task) for task in self.completed_tasks]
+    #
+    #     available = [TaskType.name() for TaskType in TASK_TYPES if TaskType not in completed_types]
+    #     # Make find user task available only if user has completed send selfie task and there is another user
+    #     # that has completed it
+    #     return available
