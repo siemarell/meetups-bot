@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from . import Base, Task, GetUserAddressTask, SendSelfieTask, SendWavesTask, FindUserTask, TASK_TYPES, TaskStatus
+from .sqla_base import Base
+from .tasks import Task, GetUserAddressTask, SendSelfieTask, SendWavesTask, FindUserTask, TASK_TYPES, TaskStatus
 
 
 class User(Base):
