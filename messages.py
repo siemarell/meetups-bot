@@ -6,7 +6,8 @@ START_MSG = """Placeholder start message"""
 UNKNOWN_CMD_MSG = """Unknown command. Use /help or keyboard"""
 ASK_US_MSG = """You can send your question to bot. Our admin will answer ASAP"""
 ACTIVE_TASK_MSG = "You have an active task:\n%s"
-ALREADY_COMPLETED_MSG = "Task %s already completed"
+ALREADY_COMPLETED_MSG = "Task \"%s\" has already been completed"
+NOT_AVAILABLE_TASK_MSG = "Task %s is not available now"
 BAD_IMAGE_MSG = """Image should contain exactly one face"""
 
 # Task descriptions and onComplete messsages

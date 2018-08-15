@@ -108,7 +108,7 @@ class GetUserAddressTask(Task):
 
     @property
     def on_complete_msg(self) -> str:
-        return GET_USER_ADDRESS_DESCRIPTION
+        return GET_USER_ADDRESS_ON_COMPLETE_MSG
 
     def _verify(self, address):
         validated = False
@@ -253,9 +253,9 @@ class FindUserTask(Task):
     __tablename__ = 'task_find_user'
 
     id = Column(Integer, ForeignKey('task.id'), primary_key=True)
-    user_to_find_id = Column(String, ForeignKey('user.chat_id'))
+    #user_to_find_id = Column(String, ForeignKey('user.chat_id'))
 
-    user_to_find = relationship("User", back_populates='task_find_user')
+    #user_to_find = relationship("User")
 
     __mapper_args__ = {
         'polymorphic_identity': __tablename__,

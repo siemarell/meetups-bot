@@ -7,6 +7,7 @@ from menus import keyboard_menu_markup, create_tasks_menu, MenuCommands
 from custom_filters import reply_to_forward
 from config import ADMIN_CHAT_ID
 from messages import *
+from task_factory import TaskFactory, TaskCreationException
 
 
 def start(bot, update):
@@ -41,16 +42,14 @@ def task_menu_callback(bot, update):
     if user.active_task:
         msg = ACTIVE_TASK_MSG % user.active_task.description
         update.effective_message.reply_text(msg)
-    elif task_name in (task.name() for task in user.completed_tasks):
-        msg = ALREADY_COMPLETED_MSG % task_name
-        update.effective_message.reply_text(msg)
     else:
-        # Get task class and create instance
-        task = next(filter(lambda x: x.name() == task_name, TASK_TYPES))()
-
-        user.add_task(task)
-        update.effective_message.reply_text(task.description)
-        session.commit()
+        try:
+            task = TaskFactory.create_task(task_name, user)
+            user.add_task(task)
+            update.effective_message.reply_text(task.description)
+            session.commit()
+        except TaskCreationException as e:
+            update.effective_message.reply_text(str(e))
     session.close()
 
 

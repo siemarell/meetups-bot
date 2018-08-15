@@ -1,18 +1,21 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from . import Base, Task, GetUserAddressTask, SendSelfieTask, SendWavesTask, TASK_TYPES, TaskStatus
+from . import Base, Task, GetUserAddressTask, SendSelfieTask, SendWavesTask, FindUserTask, TASK_TYPES, TaskStatus
 
 
 class User(Base):
     __tablename__ = 'user'
 
     chat_id = Column(String, primary_key=True)
-    tasks = relationship("Task", back_populates='user', remote_side=[chat_id])
+    tasks = relationship("Task", back_populates='user')
 
     def __init__(self, chat_id):
         self.chat_id = chat_id
 
     def add_task(self, task: Task):
+        # Find class by name and create instance
+
+
         task.status = TaskStatus.ADDED
         self.tasks.append(task)
 
