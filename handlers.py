@@ -6,7 +6,7 @@ from db import Session
 from menus import keyboard_menu_markup, create_tasks_menu, MenuCommands
 from custom_filters import reply_to_forward
 from config import ADMIN_CHAT_ID
-from bot_messages import *
+from messages import *
 
 
 def start(bot, update):

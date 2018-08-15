@@ -5,10 +5,11 @@ import datetime
 from enum import Enum, auto
 from abc import abstractmethod
 import requests
-from config import CHAIN, NODES, APP_WAVES_ADDRESS
+from config import CHAIN, NODES
 from .base import Base
 from rewarder import rewarder
 from check_selfie import face_locations
+from messages import *
 
 import pywaves as pw
 
@@ -103,11 +104,11 @@ class GetUserAddressTask(Task):
 
     @property
     def description(self) -> str:
-        return f'Download Waves app and tell me your address'
+        return GET_USER_ADDRESS_DESCRIPTION
 
     @property
     def on_complete_msg(self) -> str:
-        return 'Congratulations! Now I have your address and you can choose next task'
+        return GET_USER_ADDRESS_DESCRIPTION
 
     def _verify(self, address):
         validated = False
@@ -141,11 +142,11 @@ class DexExchangeTask(Task):
 
     @property
     def description(self) -> str:
-        return "Exchange WAVES to BTC using DEX"
+        return DEX_EXCHANGE_DESCRIPTION
 
     @property
     def on_complete_msg(self) -> str:
-        return 'Congratulations! DEX task completed'
+        return DEX_EXCHANGE_ON_COMPLETE_MSG
 
     def _verify(self) -> bool:
         # Todo: verify amount
@@ -189,11 +190,11 @@ class SendWavesTask(Task):
 
     @property
     def description(self) -> str:
-        return f"Send 1 waves to {APP_WAVES_ADDRESS}"
+        return SEND_WAVES_DESCRIPTION
 
     @property
     def on_complete_msg(self) -> str:
-        return "Completed send task"
+        return SEND_WAVES_ON_COMPLETE_MSG
 
     def _verify(self) -> bool:
         # Todo: verify amount
@@ -232,11 +233,11 @@ class SendSelfieTask(Task):
 
     @property
     def description(self) -> str:
-        return 'Send me your selfie'
+        return SEND_SELFIE_DESCRIPTION
 
     @property
     def on_complete_msg(self) -> str:
-        return 'Congratulations! I got your picture.'
+        return SEND_SELFIE_ON_COMPLETE_MSG
 
     def _verify(self, full_image) -> bool:
         # ToDo: Send message on false condition. User should know why image is bad
@@ -248,4 +249,38 @@ class SendSelfieTask(Task):
         return condition
 
 
-TASK_TYPES = [GetUserAddressTask, DexExchangeTask, SendWavesTask, SendSelfieTask]
+class FindUserTask(Task):
+    __tablename__ = 'task_find_user'
+
+    id = Column(Integer, ForeignKey('task.id'), primary_key=True)
+    user_to_find_id = Column(String, ForeignKey('user.chat_id'))
+
+    user_to_find = relationship("User", back_populates='task_find_user')
+
+    __mapper_args__ = {
+        'polymorphic_identity': __tablename__,
+    }
+
+    reward = 1
+
+    @staticmethod
+    def name() -> str:
+        return 'Find user'
+
+    @property
+    def result(self) -> str:
+        return 'message'
+
+    @property
+    def description(self) -> str:
+        return FIND_USER_DESCRIPTION
+
+    @property
+    def on_complete_msg(self) -> str:
+        return FIND_USER_ON_COMPLETE_MSG
+
+    def _verify(self, address) -> bool:
+        return address == self.user_to_find.address
+
+
+TASK_TYPES = [GetUserAddressTask, DexExchangeTask, SendWavesTask, SendSelfieTask, FindUserTask]

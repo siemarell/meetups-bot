@@ -1,7 +1,0 @@
-HELP_MSG = """Placeholder help message"""
-START_MSG = """Placeholder start message"""
-UNKNOWN_CMD_MSG = """Placeholder unknown command message"""
-ASK_US_MSG = """Placeholder ask us message"""
-ACTIVE_TASK_MSG = "You have an active task:\n%s"
-ALREADY_COMPLETED_MSG = "Task %s already completed"
-BAD_IMAGE_MSG = """Image should contain exactly one face"""

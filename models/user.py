@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from . import Base, Task, GetUserAddressTask, DexExchangeTask, SendWavesTask, TASK_TYPES, TaskStatus
+from . import Base, Task, GetUserAddressTask, SendSelfieTask, SendWavesTask, TASK_TYPES, TaskStatus
 
 
 class User(Base):
@@ -32,10 +32,20 @@ class User(Base):
             return address_task.address
 
     @property
+    def image(self):
+        selfie_task: SendSelfieTask = next(filter(lambda task: type(task) == SendSelfieTask,
+                                                  self.completed_tasks), None)
+        if selfie_task:
+            return selfie_task.image_path
+
+    @property
     def available_tasks(self) -> [str]:
         if not self.address:
             return [GetUserAddressTask]
 
         completed_types = [type(task) for task in self.completed_tasks]
-        return [TaskType.name() for TaskType in TASK_TYPES
-                if TaskType not in completed_types]
+
+        available = [TaskType.name() for TaskType in TASK_TYPES if TaskType not in completed_types]
+        # Make find user task available only if user has completed send selfie task and there is another user
+        # that has completed it
+        return available
