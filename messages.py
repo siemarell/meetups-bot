@@ -25,4 +25,4 @@ SEND_SELFIE_DESCRIPTION = 'Send me your selfie'
 SEND_SELFIE_ON_COMPLETE_MSG = 'Congratulations! I\'ve got your picture'
 # Find user
 FIND_USER_DESCRIPTION = 'Find this user and, take his address and send it to me'
-FIND_USER_ON_COMPLETE_MSG = 'Got it!'
+FIND_USER_ON_COMPLETE_MSG = 'Correct address! Good job!'

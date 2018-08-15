@@ -253,9 +253,9 @@ class FindUserTask(Task):
     __tablename__ = 'task_find_user'
 
     id = Column(Integer, ForeignKey('task.id'), primary_key=True)
-    #user_to_find_id = Column(String, ForeignKey('user.chat_id'))
+    user_to_find_id = Column(String, ForeignKey('user.chat_id'))
 
-    #user_to_find = relationship("User")
+    user_to_find = relationship("User")
 
     __mapper_args__ = {
         'polymorphic_identity': __tablename__,

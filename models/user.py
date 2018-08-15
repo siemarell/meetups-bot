@@ -13,9 +13,6 @@ class User(Base):
         self.chat_id = chat_id
 
     def add_task(self, task: Task):
-        # Find class by name and create instance
-
-
         task.status = TaskStatus.ADDED
         self.tasks.append(task)
 
