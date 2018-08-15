@@ -37,7 +37,7 @@ class User(Base):
         selfie_task: SendSelfieTask = next(filter(lambda task: type(task) == SendSelfieTask,
                                                   self.completed_tasks), None)
         if selfie_task:
-            return selfie_task.image_path
+            return selfie_task.image_id
 
     # @property
     # def available_tasks(self) -> [str]:

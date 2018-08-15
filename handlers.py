@@ -57,8 +57,9 @@ def tasks(bot, update):
     chat_id = update.message.chat_id
     session = Session()
     user: User = session.query(User).filter(User.chat_id == chat_id).one()
-    if user.active_task:
-        update.message.reply_text(user.active_task.description)
+    active_task = user.active_task
+    if active_task:
+        active_task.send_description(bot)
     else:
         tasks_menu = create_tasks_menu(TaskFactory.available_tasks(user))
         update.message.reply_text("Select task:", reply_markup=tasks_menu)

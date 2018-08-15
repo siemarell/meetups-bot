@@ -1,6 +1,7 @@
 import face_recognition
 import io
-from sqlalchemy import Column, Integer, String, ForeignKey
+import telegram
+from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary
 from .base_task import Task
 from messages import *
 
@@ -14,7 +15,7 @@ class SendSelfieTask(Task):
     __tablename__ = 'task_send_selfie'
 
     id = Column(Integer, ForeignKey('task.id'), primary_key=True)
-    image_path = Column(String)
+    image_id = Column(String)
     __mapper_args__ = {
         'polymorphic_identity': __tablename__,
     }
@@ -43,6 +44,6 @@ class SendSelfieTask(Task):
         image_bytes = image_file.download_as_bytearray()
         condition = len(face_locations(image_bytes)) == 1
         if condition:
-            self.image_path = image_file.file_path
+            self.image_id = image_file.file_id
         return condition
 

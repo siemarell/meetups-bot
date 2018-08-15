@@ -18,6 +18,10 @@ class FindUserTask(Task):
 
     reward = 1
 
+    def send_description(self, bot):
+        super().send_description(bot)
+        bot.send_photo(self.user.chat_id, self.user.image)
+
     @staticmethod
     def name() -> str:
         return 'Find user'

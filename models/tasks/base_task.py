@@ -1,3 +1,4 @@
+import telegram
 from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import Enum as AEnum
@@ -50,6 +51,10 @@ class Task(Base):  # , metaclass=ABCMeta):
                 except Exception as e:
                     print(e)
         return condition
+
+    def send_description(self, bot: telegram.Bot):
+        chat_id = self.user.chat_id
+        bot.send_message(chat_id, self.description)
 
     @staticmethod
     @abstractmethod
