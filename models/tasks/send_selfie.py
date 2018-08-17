@@ -40,6 +40,7 @@ class SendSelfieTask(Task):
 
     def _verify(self, full_image) -> bool:
         # ToDo: Send message on false condition. User should know why image is bad
+        # ToDo: download can cause error. Do smth.
         image_file = full_image.get_file()
         image_bytes = image_file.download_as_bytearray()
         condition = len(face_locations(image_bytes)) == 1

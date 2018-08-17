@@ -46,7 +46,7 @@ def task_menu_callback(bot, update):
         try:
             task = TaskFactory.create_task(task_name, user)
             user.add_task(task)
-            update.effective_message.reply_text(task.description)
+            task.send_description(bot)
             session.commit()
         except TaskCreationException as e:
             update.effective_message.reply_text(str(e))
