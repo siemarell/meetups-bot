@@ -190,3 +190,5 @@ sandbox2.py
 test/storage.db
 storage.db
 help.txt
+logs
+!*/**/.gitkeep

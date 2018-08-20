@@ -1,10 +1,9 @@
+import log_config
 import logging
 from telegram.ext import Updater
 from handlers import handlers
 from bot import bot
 from checker import Checker
-
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +16,17 @@ def main():
     # Register handlers
     for handler in handlers:
         dp.add_handler(handler)
+    logger.info('Handlers registered')
 
     # Tasks checker
     checker = Checker(bot)
     checker.daemon = True
     checker.start()
+    logger.info('Checker started')
+
     # Start bot
     updater.start_polling()
+    logger.info('Bot started')
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since

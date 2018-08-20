@@ -1,6 +1,5 @@
-import telegram
+import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
-from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from models import User, GetUserAddressTask, TaskStatus, Task, TASK_TYPES
 from db import Session
 from menus import keyboard_menu_markup, create_tasks_menu, MenuCommands
@@ -10,11 +9,15 @@ from messages import *
 from task_factory import TaskFactory, TaskCreationException
 
 
+logger = logging.getLogger(__name__)
+
+
 def start(bot, update):
     chat_id = update.message.chat_id
     session = Session()
     user: User = session.query(User).filter(User.chat_id == chat_id).one_or_none()
     if not user:
+        logger.info(f'New user {chat_id}')
         # Initialize user and add first task
         user = User(chat_id)
         first_task = GetUserAddressTask()
@@ -50,6 +53,7 @@ def task_menu_callback(bot, update):
             session.commit()
         except TaskCreationException as e:
             update.effective_message.reply_text(str(e))
+            logger.error(e)
     session.close()
 
 
