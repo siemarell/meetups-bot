@@ -1,6 +1,6 @@
 import random
 from models import TASK_TYPES, Task, FindUserTask, User, GetUserAddressTask
-from messages import ALREADY_COMPLETED_MSG, NOT_AVAILABLE_TASK_MSG
+from bot.messages import ALREADY_COMPLETED_MSG, NOT_AVAILABLE_TASK_MSG
 from db import Session
 
 
@@ -27,7 +27,7 @@ class TaskFactory:
             chat_id = user.chat_id
             available_users = [user for user in session.query(User).all() if user.image and user.chat_id != chat_id]
             if len(available_users) == 0:
-                raise NotAvailableTaskException(NOT_AVAILABLE_TASK_MSG % task_name)
+                raise NotEnoughUsersException(NOT_AVAILABLE_TASK_MSG % task_name)
             user_to_find = random.choice(available_users)
             task.user_to_find = user_to_find
         return task
@@ -35,7 +35,7 @@ class TaskFactory:
     @staticmethod
     def available_tasks(user: User):
         if not user.address:
-            return [GetUserAddressTask]
+            return [GetUserAddressTask.name()]
 
         completed_types = [type(task) for task in user.completed_tasks]
 

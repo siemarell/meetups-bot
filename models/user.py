@@ -17,6 +17,9 @@ class User(Base):
         task.status = TaskStatus.ADDED
         self.tasks.append(task)
 
+    def remove_task(self, task: Task):
+        task.status = TaskStatus.CANCELED
+
     @property
     def active_task(self) -> Task:
         return next(filter(lambda task: task.status == TaskStatus.ADDED, self.tasks), None)

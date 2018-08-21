@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, ForeignKey
 import requests
 from config import CHAIN, NODES
 from .base_task import Task
-from messages import *
+from bot.messages import *
 
 
 class DexExchangeTask(Task):

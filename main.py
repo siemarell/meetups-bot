@@ -1,8 +1,7 @@
 import log_config
 import logging
 from telegram.ext import Updater
-from handlers import handlers
-from bot import bot
+from bot import handlers, bot
 from checker import Checker
 
 logger = logging.getLogger(__name__)

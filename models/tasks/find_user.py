@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from .base_task import Task
-from messages import *
+from bot.messages import *
 
 
 class FindUserTask(Task):
@@ -20,7 +20,7 @@ class FindUserTask(Task):
 
     def send_description(self, bot):
         super().send_description(bot)
-        bot.send_photo(self.user.chat_id, self.user.image)
+        bot.send_photo(self.user.chat_id, self.user_to_find.image)
 
     @staticmethod
     def name() -> str:

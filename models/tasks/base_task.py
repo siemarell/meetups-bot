@@ -15,6 +15,7 @@ class TaskStatus(Enum):
     SENT = auto()
     COMPLETED = auto()
     REWARDED = auto()
+    CANCELED = auto()
 
 
 class Task(Base):  # , metaclass=ABCMeta):

@@ -1,9 +1,8 @@
 import face_recognition
 import io
-import telegram
-from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary
+from sqlalchemy import Column, Integer, String, ForeignKey
 from .base_task import Task
-from messages import *
+from bot.messages import *
 
 
 def face_locations(image):

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from config import CHAIN
-from messages import *
+from bot.messages import *
 from .base_task import Task
 import pywaves as pw
 
