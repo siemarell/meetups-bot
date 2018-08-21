@@ -160,3 +160,6 @@ venv.bak/
 
 storage.db
 help.txt
+/logs
+!/logs/.gitkeep
+bot.tar

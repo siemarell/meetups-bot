@@ -192,3 +192,4 @@ storage.db
 help.txt
 logs
 !*/**/.gitkeep
+bot.tar
