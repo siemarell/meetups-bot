@@ -104,7 +104,7 @@ def photo(bot, update):
     user: User = session.query(User).filter(User.chat_id == chat_id).one()
     active_task = user.active_task
     if active_task and active_task.result == 'image':
-        _, full_image = update.message.photo
+        full_image = update.message.photo[-1]
         if active_task.verify(full_image):
             session.commit()
             update.message.reply_text(active_task.on_complete_msg)

@@ -1,8 +1,8 @@
 from config import APP_WAVES_ADDRESS
 
 # Replies (handler file)
-HELP_MSG = """Placeholder help message"""
-START_MSG = """Placeholder start message"""
+HELP_MSG = """Type message to ask us question or use the keyboard to select task. Type /start if no keyboard"""
+START_MSG = f"""Hello! This is waves bot! You can type your questions or complete tasks and get rewards!"""
 UNKNOWN_CMD_MSG = """Unknown command. Use /help or keyboard"""
 ASK_US_MSG = """You can send your question to bot. Our admin will answer ASAP"""
 ACTIVE_TASK_MSG = "You have an active task:\n%s"

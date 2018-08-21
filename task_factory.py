@@ -19,14 +19,17 @@ class TaskFactory:
 
         # For find user task we need to find another random user with image
         if type(task) == FindUserTask:
+            if not user.image:
+                raise NotAvailableTaskException('Please complete send selfie task first')
             session = Session.object_session(user)
             # ToDo: we need to have another user with selfie
             # available_users = session.query(User).filter(User.chat_id != self.chat_id).all()
-            available_users = [user for user in session.query(User).all() if user.image]
+            chat_id = user.chat_id
+            available_users = [user for user in session.query(User).all() if user.image and user.chat_id != chat_id]
             if len(available_users) == 0:
                 raise NotAvailableTaskException(NOT_AVAILABLE_TASK_MSG % task_name)
-            user = random.choice(available_users)
-            task.user_to_find = user
+            user_to_find = random.choice(available_users)
+            task.user_to_find = user_to_find
         return task
 
     @staticmethod

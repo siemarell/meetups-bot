@@ -3,8 +3,8 @@ from enum import Enum, auto
 
 
 class MenuCommands(Enum):
-    TASKS = 'Tasks\u00A0'
-    ASK_US = 'Ask us\u00A0'
+    TASKS = 'Tasks'
+    ASK_US = 'Ask us'
 
 
 def _build_menu(buttons,
