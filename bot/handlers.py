@@ -1,12 +1,11 @@
 import logging
 from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
-from models import User, GetUserAddressTask
-from db import Session
+from models import User
 from .menus import reply_keyboard_menu_markup, cancel_task_markup, get_tasks_menu_markup, ReplyKeyboardMenuCommands
 from .custom_filters import reply_to_forward
 from config import ADMIN_CHAT_ID
 from .messages import *
-from .utils import get_or_create_user, with_user
+from .utils import with_user
 from task_factory import TaskFactory, TaskCreationException
 
 
@@ -47,7 +46,7 @@ def task_menu_callback(bot, update, user: User):
 def task_cancel_callback(bot, update, user):
     active_task = user.active_task
     user.remove_task(active_task)
-    bot.sendMessage(user.chat_id, f"Task removed: {active_task.name()}")
+    bot.sendMessage(user.chat_id, TASK_REMOVED_MSG % active_task.name())
 
 
 @with_user
@@ -55,10 +54,10 @@ def tasks(bot, update, user):
     active_task = user.active_task
     if active_task:
         active_task.send_description(bot)
-        update.message.reply_text("If you want to cancel task press:", reply_markup=cancel_task_markup)
+        update.message.reply_text(CANCEL_MENU_TITLE, reply_markup=cancel_task_markup)
     else:
         tasks_menu = get_tasks_menu_markup(TaskFactory.available_tasks(user))
-        update.message.reply_text("Select task:", reply_markup=tasks_menu)
+        update.message.reply_text(TASKS_MENU_TITLE, reply_markup=tasks_menu)
 
 
 def ask_us(bot, update):
@@ -99,13 +98,13 @@ def photo(bot, update, user):
 handlers = [
     CommandHandler('start', start, filters=Filters.private),                                # Start command
     CommandHandler(['help', 'info'], helper, filters=Filters.private),                      # Help/info command
-    CallbackQueryHandler(task_cancel_callback, pattern='cancel'),  # Task menu callback
+    CallbackQueryHandler(task_cancel_callback, pattern='cancel'),                           # Task menu callback
     CallbackQueryHandler(task_menu_callback),                                               # Task menu callback
     MessageHandler(Filters.private & Filters.command, unknown),                             # Unknown command
     MessageHandler(Filters.private & Filters.text &
-                   Filters.regex(ReplyKeyboardMenuCommands.TASKS.value), tasks),           # Tasks command
+                   Filters.regex(ReplyKeyboardMenuCommands.TASKS.value), tasks),            # Tasks command
     MessageHandler(Filters.private & Filters.text &
-                   Filters.regex(ReplyKeyboardMenuCommands.ASK_US.value), ask_us),         # Ask us command
+                   Filters.regex(ReplyKeyboardMenuCommands.ASK_US.value), ask_us),          # Ask us command
     MessageHandler(Filters.private & Filters.photo, photo),                                 # User photos
     MessageHandler(Filters.private & Filters.text, message),                                # User text messages
     MessageHandler(Filters.chat(ADMIN_CHAT_ID) & reply_to_forward, admin_reply),            # Admin reply to forwarded

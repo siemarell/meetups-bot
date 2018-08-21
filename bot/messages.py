@@ -9,6 +9,11 @@ ACTIVE_TASK_MSG = "You have an active task:\n%s"
 ALREADY_COMPLETED_MSG = "Task \"%s\" has already been completed"
 NOT_AVAILABLE_TASK_MSG = "Task %s is not available now"
 BAD_IMAGE_MSG = """Image should contain exactly one face"""
+TASK_REMOVED_MSG = "Task removed: %s"
+
+# Menu titles
+CANCEL_MENU_TITLE = "If you want to cancel task press:"
+TASKS_MENU_TITLE = "Select task:"
 
 # Task descriptions and onComplete messsages
 # Get user address
