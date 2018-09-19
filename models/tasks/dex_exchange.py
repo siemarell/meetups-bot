@@ -18,7 +18,7 @@ class DexExchangeTask(Task):
 
     @staticmethod
     def name() -> str:
-        return 'Make DEX transaction'
+        return DEX_EXCHANGE_NAME
 
     @property
     def result(self) -> str:

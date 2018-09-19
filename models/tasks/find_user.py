@@ -24,7 +24,7 @@ class FindUserTask(Task):
 
     @staticmethod
     def name() -> str:
-        return 'Find user'
+        return FIND_USER_NAME
 
     @property
     def result(self) -> str:

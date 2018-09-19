@@ -19,7 +19,7 @@ class GetUserAddressTask(Task):
 
     @staticmethod
     def name() -> str:
-        return 'Give address'
+        return GET_USER_ADDRESS_NAME
 
     @property
     def result(self) -> str:

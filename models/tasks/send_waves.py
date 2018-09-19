@@ -18,7 +18,7 @@ class SendWavesTask(Task):
 
     @staticmethod
     def name() -> str:
-        return 'Make WAVES transaction'
+        return SEND_WAVES_NAME
 
     @property
     def result(self) -> str:

@@ -23,7 +23,7 @@ class SendSelfieTask(Task):
 
     @staticmethod
     def name() -> str:
-        return 'Send selfie'
+        return SEND_SELFIE_NAME
 
     @property
     def result(self) -> str:
