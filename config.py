@@ -17,4 +17,5 @@ ADMIN_CHAT_ID = int(os.environ.get('ADMIN_CHAT_ID')) if os.environ.get('ADMIN_CH
 # Background task check interval in seconds
 ENV = os.environ.get('ENV', 'PROD')
 CHECK_INTERVAL = int(os.environ.get('CHECK_INTERVAL')) if os.environ.get('CHECK_INTERVAL') else 5
-REWARD_LIMIT = int(os.environ.get('REWARD_LIMIT')) if os.environ.get('REWARD_LIMIT') else 100
+REWARD_LIMIT = int(os.environ.get('REWARD_LIMIT')) if os.environ.get('REWARD_LIMIT') else 2
+REWARD_VALUE = float(os.environ.get('REWARD_VALUE ')) if os.environ.get('REWARD_VALUE') else 0.01

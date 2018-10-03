@@ -14,7 +14,7 @@ class Rewarder:
             raise Exception('Insufficient funds')
         recipient = pw.Address(address)
         self.remaining_waves -= amount
-        self.address.sendWaves(recipient, amount * 10 ** 8)
+        self.address.sendWaves(recipient, int(amount * 10 ** 8))
 
 
 rewarder = Rewarder()

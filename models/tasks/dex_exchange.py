@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey
 import requests
-from config import CHAIN, NODES
+from config import CHAIN, NODES, REWARD_VALUE
 from .base_task import Task
 from bot.messages import *
 
@@ -14,7 +14,7 @@ class DexExchangeTask(Task):
         'polymorphic_identity': __tablename__,
     }
 
-    reward = 1
+    reward = REWARD_VALUE
 
     @staticmethod
     def name() -> str:

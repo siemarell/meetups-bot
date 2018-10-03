@@ -3,6 +3,7 @@ import requests
 from config import CHAIN, NODES
 from .base_task import Task
 from bot.messages import *
+from config import REWARD_VALUE
 
 
 class SendWavesTask(Task):
@@ -14,7 +15,7 @@ class SendWavesTask(Task):
         'polymorphic_identity': __tablename__,
     }
 
-    reward = 1
+    reward = REWARD_VALUE
 
     @staticmethod
     def name() -> str:

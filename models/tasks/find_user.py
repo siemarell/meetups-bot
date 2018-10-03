@@ -2,7 +2,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from .base_task import Task
 from bot.messages import *
-
+from config import REWARD_VALUE, NODES, CHAIN
+import requests
 
 class FindUserTask(Task):
     __tablename__ = 'task_find_user'
@@ -16,7 +17,7 @@ class FindUserTask(Task):
         'polymorphic_identity': __tablename__,
     }
 
-    reward = 1
+    reward = REWARD_VALUE
 
     def send_description(self, bot):
         super().send_description(bot)
@@ -28,7 +29,7 @@ class FindUserTask(Task):
 
     @property
     def result(self) -> str:
-        return 'message'
+        return 'background'
 
     @property
     def description(self) -> str:
@@ -39,5 +40,17 @@ class FindUserTask(Task):
         return FIND_USER_ON_COMPLETE_MSG
 
     def _verify(self, address) -> bool:
-        return address == self.user_to_find.address
+        # Todo: verify amount
+        node_url = NODES.get(CHAIN)
+        try:
+            last_500_tx = requests.get(f'{node_url}/transactions/address/{self.user.address}/limit/500').json()[0]
+            txs_to_app = [tx for tx in last_500_tx if
+                          tx['type'] == 4 and
+                          tx['recipient'] == self.user_to_find.address and
+                          tx['timestamp'] / 1000 > self.created.timestamp()]
+            if txs_to_app:
+                return True
+        except Exception as e:
+            pass
+        return False
 
