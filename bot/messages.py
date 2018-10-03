@@ -25,7 +25,7 @@ DEX_EXCHANGE_DESCRIPTION = 'Сходи на DEX и поменяй WAVES на Bit
 DEX_EXCHANGE_ON_COMPLETE_MSG = 'Мои искренние поздравления! Ты одолел наш DEX'
 # Send WAVES
 SEND_WAVES_NAME = 'Соверши перевод WAVES'
-SEND_WAVES_DESCRIPTION = f'Следующее задание не для жадных. Отправь 0.001 WAVES на адрес: {APP_WAVES_ADDRESS}'
+SEND_WAVES_DESCRIPTION = 'Следующее задание не для жадных. Отправь 0.001 WAVES на адрес:'
 SEND_WAVES_ON_COMPLETE_MSG = 'Воу, а ты ничего! Поздравляю тебя с успешной сдачей экзамена на жадность. Мы тебе компенсировали твои токенами. С процентами :)'
 # Send selfie
 SEND_SELFIE_NAME = 'Селфи'

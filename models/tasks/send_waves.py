@@ -17,6 +17,11 @@ class SendWavesTask(Task):
 
     reward = REWARD_VALUE
 
+    def send_description(self, bot):
+        super().send_description(bot)
+        chat_id = self.user.chat_id
+        bot.send_message(chat_id, APP_WAVES_ADDRESS)
+
     @staticmethod
     def name() -> str:
         return SEND_WAVES_NAME
