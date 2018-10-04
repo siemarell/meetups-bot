@@ -1,9 +1,13 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+import logging
 from .base_task import Task
 from bot.messages import *
 from config import REWARD_VALUE, NODES, CHAIN
 import requests
+
+logger = logging.getLogger(__name__)
+
 
 class FindUserTask(Task):
     __tablename__ = 'task_find_user'
@@ -39,7 +43,7 @@ class FindUserTask(Task):
     def on_complete_msg(self) -> str:
         return FIND_USER_ON_COMPLETE_MSG
 
-    def _verify(self, address) -> bool:
+    def _verify(self) -> bool:
         # Todo: verify amount
         node_url = NODES.get(CHAIN)
         try:
@@ -51,6 +55,6 @@ class FindUserTask(Task):
             if txs_to_app:
                 return True
         except Exception as e:
-            pass
+            logging.error(e)
         return False
 

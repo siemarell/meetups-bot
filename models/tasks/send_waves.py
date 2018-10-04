@@ -1,9 +1,12 @@
 from sqlalchemy import Column, Integer, ForeignKey
 import requests
+import logging
 from config import CHAIN, NODES
 from .base_task import Task
 from bot.messages import *
 from config import REWARD_VALUE
+
+logger = logging.getLogger(__name__)
 
 
 class SendWavesTask(Task):
@@ -50,6 +53,6 @@ class SendWavesTask(Task):
             if txs_to_app:
                 return True
         except Exception as e:
-            pass
+            logger.error(e)
         return False
 

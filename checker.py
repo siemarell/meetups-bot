@@ -2,9 +2,9 @@ import telegram
 import logging
 from threading import Thread
 from time import sleep
-from models import Task, TaskStatus, DexExchangeTask, SendWavesTask, User
+from models import User
 from db import Session
-from config import CHAIN, CHECK_INTERVAL
+from config import CHECK_INTERVAL
 
 logger = logging.getLogger(__name__)
 

@@ -56,8 +56,12 @@ def tasks(bot, update, user):
         active_task.send_description(bot)
         update.message.reply_text(CANCEL_MENU_TITLE, reply_markup=cancel_task_markup)
     else:
-        tasks_menu = get_tasks_menu_markup(TaskFactory.available_tasks(user))
-        update.message.reply_text(TASKS_MENU_TITLE, reply_markup=tasks_menu)
+        available_tasks = TaskFactory.available_tasks(user)
+        if len(available_tasks) > 0:
+            tasks_menu = get_tasks_menu_markup(available_tasks)
+            update.message.reply_text(TASKS_MENU_TITLE, reply_markup=tasks_menu)
+        else:
+            update.message.reply_text(ALL_TASKS_COMPLETED_MSG)
 
 
 def ask_us(bot, update):
