@@ -1,4 +1,5 @@
 import telegram
+import logging
 from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import Enum as AEnum
@@ -7,6 +8,8 @@ from enum import Enum, auto
 from abc import abstractmethod
 from ..sqla_base import Base
 from rewarder import rewarder
+
+logger = logging.getLogger(__name__)
 
 
 class TaskStatus(Enum):
@@ -45,12 +48,14 @@ class Task(Base):  # , metaclass=ABCMeta):
         condition = self._verify(*args)
         if condition:
             self.status = TaskStatus.COMPLETED
+            logger.info(f'{self.name()} for {self.user_id} completed')
             if self.reward > 0:
                 try:
                     rewarder.send_reward(self.user.address, self.reward)
                     self.status = TaskStatus.REWARDED
+                    logger.info(f'{self.name()} for {self.user_id} rewarded')
                 except Exception as e:
-                    print(e)
+                    logger.error(e)
         return condition
 
     def send_description(self, bot: telegram.Bot):
