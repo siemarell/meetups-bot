@@ -15,4 +15,4 @@ python-telegram-bot==10.1.0
 PyWaves==0.8.14.post2
 requests==2.19.1
 SQLAlchemy==1.2.10
-urllib3==1.23
+urllib3==1.24.2
