@@ -8,7 +8,7 @@ face-recognition-models==0.3.0
 future==0.16.0
 idna==2.7
 numpy==1.15.0
-Pillow==5.2.0
+Pillow==8.1.1
 pyblake2==1.1.2
 python-axolotl-curve25519==0.4.1.post2
 python-telegram-bot==10.1.0
